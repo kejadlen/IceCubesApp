@@ -12,7 +12,13 @@ public struct EmojiTextApp: View {
 
   public init(_ markdown: HTMLString, emojis: [Emoji], language: String? = nil, lineLimit: Int? = nil, append: (() -> Text)? = nil) {
     self.markdown = markdown
-    self.emojis = emojis.map { RemoteEmoji(shortcode: $0.shortcode, url: $0.url) }
+    self.emojis = emojis.flatMap { (emoji) in
+      if let url = URL(string: emoji.url) {
+        return [RemoteEmoji(shortcode: emoji.shortcode, url: url)]
+      } else {
+        return []
+      }
+    }
     self.language = language
     self.lineLimit = lineLimit
     self.append = append
